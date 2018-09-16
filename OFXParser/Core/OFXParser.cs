@@ -19,65 +19,14 @@ namespace OFXParser
         SECOND
     }
 
-    public class OFXParser
+    public class OFXParser : IOFXParser
     {
-        /// <summary>
-        /// This method translate an OFX file to XML tags, independent of the content.
-        /// </summary>
-        /// <param name="ofxSourceFile">OFX source file</param>
-        /// <returns>XML tags in StringBuilder object.</returns>
-        private static StringBuilder TranslateToXml(string ofxSourceFile)
-        {
-            var result = new StringBuilder();
-            int level = 0;
-            string line;
-
-            if (!File.Exists(ofxSourceFile))
-            {
-                throw new FileNotFoundException("OFX source file not found: " + ofxSourceFile);
-            }
-
-            using (var sr = new StreamReader(ofxSourceFile, Encoding.Default))
-            {
-                while ((line = sr.ReadLine()) != null)
-                {
-                    line = line.Trim();
-
-                    if (line.StartsWith("</") && line.EndsWith(">"))
-                    {
-                        AddTabs(result, level, true);
-                        level--;
-                        result.Append(line);
-                    }
-                    else if (line.StartsWith("<") && line.EndsWith(">"))
-                    {
-                        level++;
-                        AddTabs(result, level, true);
-                        result.Append(line);
-                    }
-                    else if (line.StartsWith("<") && !line.EndsWith(">"))
-                    {
-                        AddTabs(result, level + 1, true);
-                        result.Append(line);
-                        result.Append(ReturnFinalTag(line));
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Extract object with OFX file data. This method checks the OFX file.
-        /// </summary>
-        /// <param name="ofxSourceFile">Full path of OFX file</param>
-        /// <returns>Extract object with OFX file data.</returns>
-        public static Extract GenerateExtract(string ofxSourceFile)
-        {
-            return GetExtract(ofxSourceFile);
-        }
-
         public static Extract GetExtract(string ofxSourceFile)
+        {
+            return new OFXParser().GenerateExtract(ofxSourceFile);
+        }
+
+        public Extract GenerateExtract(string ofxSourceFile)
         {
             // Translating to XML file
             var xmlFilePath = ofxSourceFile + ".xml";
@@ -173,11 +122,57 @@ namespace OFXParser
         }
 
         /// <summary>
+        /// This method translate an OFX file to XML tags, independent of the content.
+        /// </summary>
+        /// <param name="ofxSourceFile">OFX source file</param>
+        /// <returns>XML tags in StringBuilder object.</returns>
+        private StringBuilder TranslateToXml(string ofxSourceFile)
+        {
+            var result = new StringBuilder();
+            int level = 0;
+            string line;
+
+            if (!File.Exists(ofxSourceFile))
+            {
+                throw new FileNotFoundException("OFX source file not found: " + ofxSourceFile);
+            }
+
+            using (var sr = new StreamReader(ofxSourceFile, Encoding.Default))
+            {
+                while ((line = sr.ReadLine()) != null)
+                {
+                    line = line.Trim();
+
+                    if (line.StartsWith("</") && line.EndsWith(">"))
+                    {
+                        AddTabs(result, level, true);
+                        level--;
+                        result.Append(line);
+                    }
+                    else if (line.StartsWith("<") && line.EndsWith(">"))
+                    {
+                        level++;
+                        AddTabs(result, level, true);
+                        result.Append(line);
+                    }
+                    else if (line.StartsWith("<") && !line.EndsWith(">"))
+                    {
+                        AddTabs(result, level + 1, true);
+                        result.Append(line);
+                        result.Append(ReturnFinalTag(line));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// This method translate an OFX file to XML file, independent of the content.
         /// </summary>
         /// <param name="ofxSourceFile">Path of OFX source file</param>
         /// <param name="xmlNewFile">Path of the XML file, internally generated.</param>
-        private static void ExportToXml(string ofxSourceFile, string xmlNewFile)
+        private void ExportToXml(string ofxSourceFile, string xmlNewFile)
         {
             if (File.Exists(ofxSourceFile))
             {
@@ -214,7 +209,7 @@ namespace OFXParser
         /// </summary>
         /// <param name="content">Content of analysis</param>
         /// <returns>string with ending tag.</returns>
-        private static string ReturnFinalTag(string content)
+        private string ReturnFinalTag(string content)
         {
             var returnFinal = string.Empty;
 
@@ -238,7 +233,7 @@ namespace OFXParser
         /// <param name="stringObject">Line of content</param>
         /// <param name="lengthTabs">Length os tabs to add into content</param>
         /// <param name="newLine">Is it new line?</param>
-        private static void AddTabs(StringBuilder stringObject, int lengthTabs, bool newLine)
+        private void AddTabs(StringBuilder stringObject, int lengthTabs, bool newLine)
         {
             if (newLine)
             {
@@ -256,7 +251,7 @@ namespace OFXParser
         /// <param name="ofxDate">Date</param>
         /// <param name="partDateTime">Part of date</param>
         /// <returns></returns>
-        private static int GetPartOfOfxDate(string ofxDate, PartDateTime partDateTime)
+        private int GetPartOfOfxDate(string ofxDate, PartDateTime partDateTime)
         {
             int result = 0;
 
@@ -301,7 +296,7 @@ namespace OFXParser
         /// <param name="ofxDate"></param>
         /// <param name="extract"></param>
         /// <returns></returns>
-        private static DateTime ConvertOfxDateToDateTime(string ofxDate, Extract extract)
+        private DateTime ConvertOfxDateToDateTime(string ofxDate, Extract extract)
         {
             DateTime dateTimeReturned = DateTime.MinValue;
             try
@@ -322,7 +317,7 @@ namespace OFXParser
             return dateTimeReturned;
         }
 
-        private static int GetBankId(string value, Extract extract)
+        private int GetBankId(string value, Extract extract)
         {
             int bankId;
             if (!int.TryParse(value, out bankId))
@@ -333,7 +328,7 @@ namespace OFXParser
             return bankId;
         }
 
-        private static double GetTransactionValue(string value, Extract extract)
+        private double GetTransactionValue(string value, Extract extract)
         {
             double returnValue = 0;
             try
