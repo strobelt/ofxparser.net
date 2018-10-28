@@ -13,6 +13,7 @@
     <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
     <Copyright>Apache License 2.0</Copyright>
     <PackageTags>ofx parser .net dotnet .netcore dotnetcore</PackageTags>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
 </Project>

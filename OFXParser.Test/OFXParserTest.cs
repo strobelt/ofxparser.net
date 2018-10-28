@@ -8,7 +8,7 @@ namespace OFXParser.Test
         [Test]
         public void ShouldParseValidExtract()
         {
-            var extract = OFXParser.GetExtract("E:\\extract.ofx");
+            var extract = OFXParser.GetExtract("C:\\extrato.ofx");
         }
     }
 }

@@ -45,17 +45,18 @@ namespace OFXParser
             {
                 while (xmlReader.Read())
                 {
-                    if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name.Equals("STMTTRN"))
+                    if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name.Equals("STMTTRN") && transacaoAtual != null)
                     {
-                        if (transacaoAtual != null)
-                        {
-                            extract.AddTransaction(transacaoAtual);
-                            transacaoAtual = null;
-                        }
+                        extract.AddTransaction(transacaoAtual);
+                        transacaoAtual = null;
                     }
-                    if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name.Equals("STMTTRN"))
+                    if (xmlReader.NodeType == XmlNodeType.Element)
                     {
-                        transacaoAtual = new Transaction();
+                        elementoSendoLido = xmlReader.Name;
+                        if (xmlReader.Name.Equals("STMTTRN"))
+                        {
+                            transacaoAtual = new Transaction();
+                        }
                     }
                     if (xmlReader.NodeType == XmlNodeType.Text)
                     {

@@ -1,18 +1,18 @@
 using System;
 
-namespace OfxParser.Core
+namespace OFXParser.Core
 {
-    class OfxParserException : Exception
+    class OFXParserException : Exception
     {
-        public OfxParserException() : base()
+        public OFXParserException() : base()
         {
         }
 
-        public OfxParserException(string message) : base(message)
+        public OFXParserException(string message) : base(message)
         {
         }
 
-        public OfxParserException(string message, Exception innerException) : base(message, innerException)
+        public OFXParserException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }
